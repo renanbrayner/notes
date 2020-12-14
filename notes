@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+readonly NOTES_DIRECTORY="${NOTES_DIRECTORY:-"${HOME}/notes/$(date +%Y)/$(date +%m)"}"
+readonly NOTES_EDITOR="${EDITOR}"
+
+readonly NOTES_FILE="$(date +%d).txt"
+readonly NOTES_PATH="${NOTES_DIRECTORY}/${NOTES_FILE}"
+
+if [ ! -d "${NOTES_DIRECTORY}" ]; then
+    while true; do
+        mkdir -p "${NOTES_DIRECTORY}"
+    done
+fi
+
+if [ ${#} -eq 0 ]; then
+    if [ -p "/dev/stdin" ]; then
+        (cat; printf "\n\n") >> "${NOTES_PATH}"
+    else
+        eval "${NOTES_EDITOR}" "${NOTES_PATH}"
+    fi
+else
+    printf "%s\n\n" "${*}" >> "${NOTES_PATH}"
+fi
